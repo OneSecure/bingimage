@@ -1,0 +1,2 @@
+TweetPony==1.5.2
+twython==3.8.2

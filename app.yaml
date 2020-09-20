@@ -1,0 +1,19 @@
+runtime: python27
+api_version: 1
+threadsafe: true
+
+libraries:
+- name: ssl
+  version: latest
+
+handlers:
+- url: /postimagetosinaweibo
+  script: main.APP
+  login: admin
+- url: /postimagetotwitter
+  script: main.APP
+  login: admin
+
+- url: /admin/.*
+  script: google.appengine.ext.admin.application
+  login: admin
