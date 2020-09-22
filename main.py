@@ -16,14 +16,14 @@ from settings import *
 
 class PostImageToSinaWeibo(webapp2.RequestHandler):
     def get(self):
-        prefix = u" #Bing# #Wallpaper# #Photo#."
+        prefix = u"#Bing# #Wallpaper# #Photo#."
         userUrl = BING_GLOBAL
         postBingImageToWeibo(prefix, userUrl)
 
         import time
         time.sleep(5)
 
-        prefix = u' 每日 #必应美图# #壁纸#。'
+        prefix = u'每日 #必应美图# #壁纸#。'
         userUrl = BING_CHINA
         postBingImageToWeibo(prefix, userUrl)
 
