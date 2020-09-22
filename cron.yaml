@@ -1,10 +1,10 @@
 cron:
 - description: post image to Sina Weibo
   url: /postimagetosinaweibo
-  schedule: every day 04:10
+  schedule: every day 07:20
 
 - description: post image to twitter
   url: /postimagetotwitter
-  schedule: every day 06:10  
+  schedule: every day 07:10  
 
 
