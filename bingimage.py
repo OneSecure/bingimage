@@ -156,6 +156,24 @@ def writeDataToFile(binData, localFile):
         f.write(binData)
         f.close()
 
+def getBingImage(userUrl):
+    respHtml = getWebContents(userUrl)
+    respHtml = str(respHtml, "utf-8")
+
+    imageUrl = extractImageUrl(respHtml)
+
+    imgData = None
+    if imageUrl:
+        parseResult = urlparse(imageUrl)
+        if len(parseResult.netloc) == 0:
+            parseResult = urlparse(userUrl)
+            slash = u'/'
+            if imageUrl[0] == u'/':
+                slash = u''
+            imageUrl = parseResult.scheme + '://' + parseResult.netloc + slash + imageUrl
+        imgData = downloadImage(imageUrl)
+    return imgData
+
 ###############################################################################
 if __name__=="__main__":
     prefix = u"Today's pretty #wallpaper # #photo # on #Bing #."
