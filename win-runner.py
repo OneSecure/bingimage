@@ -28,6 +28,9 @@ def setWallpaperWithBingImage():
     SPI_SETDESKWALLPAPER = 20 
     ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, tmp_name, 0)
 
+    import time
+    time.sleep(1)
+
     import os
     os.remove(tmp_name)
 
