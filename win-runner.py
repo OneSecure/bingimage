@@ -1,3 +1,4 @@
+import time
 from bingimage import getBingImage
 from settings import BING_CHINA
 
@@ -28,7 +29,6 @@ def setWallpaperWithBingImage():
     SPI_SETDESKWALLPAPER = 20 
     ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, tmp_name, 0)
 
-    import time
     time.sleep(1)
 
     import os
@@ -39,5 +39,13 @@ def setWallpaperWithBingImage():
     return 0
 
 if __name__=="__main__":
-    res = setWallpaperWithBingImage()
+    res = 0
+    i = 0
+    while i < 6:
+        res = setWallpaperWithBingImage()
+        if res == 0:
+            break
+        time.sleep(2)
+        i += 1
+
     sys.exit(res)
