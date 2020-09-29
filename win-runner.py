@@ -26,10 +26,10 @@ def setWallpaperWithBingImage():
     fp = None
 
     import ctypes
-    SPI_SETDESKWALLPAPER = 20 
-    ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, tmp_name, 0)
-
-    time.sleep(1)
+    SPI_SETDESKWALLPAPER = 20
+    SPIF_UPDATEINIFILE = 1
+    SPIF_SENDCHANGE = 2
+    ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, tmp_name, SPIF_SENDCHANGE | SPIF_UPDATEINIFILE)
 
     import os
     os.remove(tmp_name)
