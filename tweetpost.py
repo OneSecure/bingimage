@@ -18,7 +18,7 @@ def postTweet_py3(text, image):
     from twython import Twython, TwythonError
     result = True
 
-    twitter = Twython(consumer_key, consumer_secret, access_token, access_token_secret)
+    twitter = Twython(consumer_key, consumer_secret, access_key, access_secret)
 
     try:
         if image:
@@ -33,7 +33,7 @@ def postTweet_py3(text, image):
 
 def postTweet_py2(text, image):
     import tweetpony
-    api = tweetpony.API(consumer_key = consumer_key, consumer_secret = consumer_secret, access_token = access_token, access_token_secret = access_token_secret)
+    api = tweetpony.API(consumer_key = consumer_key, consumer_secret = consumer_secret, access_token = access_key, access_token_secret = access_secret)
     user = api.user
     result = True
     try:

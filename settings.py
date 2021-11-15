@@ -16,5 +16,5 @@ PASSWORD = u'password'
 # twitter account
 consumer_key = u"consumer_key"
 consumer_secret = u"consumer_secret"
-access_token = u"access_token"
-access_token_secret = u"access_token_secret"
+access_key = u"access_key"
+access_secret = u"access_secret"
