@@ -10,12 +10,13 @@ from settings import *
 
 def postTweet(text, image):
     if py3_or_upper:
-        postTweet_py3(text, image)
+        return postTweet_py3(text, image)
     else:
-        postTweet_py2(text, image)
+        return postTweet_py2(text, image)
 
 def postTweet_py3(text, image):
     from twython import Twython, TwythonError
+    result = True
 
     twitter = Twython(consumer_key, consumer_secret, access_token, access_token_secret)
 
@@ -26,12 +27,15 @@ def postTweet_py3(text, image):
             twitter.update_status(status=text)
     except TwythonError as e:
         print(e)
+        result = False
+    return result
 
 
 def postTweet_py2(text, image):
 	import tweetpony
 	api = tweetpony.API(consumer_key = consumer_key, consumer_secret = consumer_secret, access_token = access_token, access_token_secret = access_token_secret)
 	user = api.user
+    result = True
 	try:
 		if image:
 			api.update_status_with_single_media(status = text, media=image)
@@ -39,5 +43,7 @@ def postTweet_py2(text, image):
 			api.update_status(status = text)
 	except tweetpony.APIError as err:
 		print("Oops, something went wrong! Twitter returned error #%i and said: %s" % (err.code, err.description))
+        result = False
 	else:
 		pass #print "Yay! Your tweet has been sent!"
+    return result

@@ -24,6 +24,7 @@ import re
 import os
 from io import BytesIO
 from settings import *
+from BingHtmlParser import BingHtmlParser
 
 
 #------------------------------------------------------------------------------
@@ -35,13 +36,13 @@ def _postBingImageToWebsite(prefix, userUrl, weibo):
     respHtml = str(respHtml, "utf-8")
     #print respHtml
 
-    title = extractTitle(respHtml)
-    if title == None:
-        title = extractTitle2(respHtml)
-    #print(u"title : %s" % title)
+    p = BingHtmlParser()
+    p.feed(respHtml)
+    p.close()
 
-    imageUrl = extractImageUrl(respHtml)
-    #print(u"imageUrl : %s" % imageUrl)
+    imageUrl = p.image_url
+    title = p.info
+    copyright = p.copyright
 
     imgData = None
     if imageUrl:
@@ -62,19 +63,20 @@ def _postBingImageToWebsite(prefix, userUrl, weibo):
 
         picFile = BytesIO(imgData)
 
-        info = title + "\n" + prefix
+        info = title + " " + copyright + "\n" + prefix
 
         if weibo:
             from weibo_tiny import Client
             client = Client(APP_KEY, APP_SECRET, REDIRECT_URL, username=USERNAME, password=PASSWORD)
             client.post('statuses/upload', status=info, pic=picFile)
         else:
-            maxTweetLen = 110
-            if len(info) > maxTweetLen:
-                info = info[0 : maxTweetLen]
+            #maxTweetLen = 110
+            #if len(info) > maxTweetLen:
+            #    info = info[0 : maxTweetLen]
 
             from tweetpost import postTweet
-            postTweet(info, picFile)
+            if postTweet(info, picFile) == False:
+                postTweet(title, picFile)
 
 def postBingImageToTwitter(prefix, userUrl):
     _postBingImageToWebsite(prefix, userUrl, None)
@@ -84,63 +86,6 @@ def getWebContents(targetUrl):
     resp = urlopen(req)
     respHtml = resp.read()
     return respHtml
-
-# id="sh_cp" class="sc_light" title="卡尔斯岛上的Kallur灯塔，法罗群岛 (© Janne Kahila/500px)"
-def extractTitle(respHtml):
-    titlePat = 'class="text" id="headline">'
-    # http://www.regexlab.com/wild2regex
-    # https://en.wikipedia.org/wiki/List_of_Unicode_characters
-    # http://www.runoob.com/regexp/regexp-tutorial.html
-    titlePatternEx = r'class\="text"\s+id\="headline">[^<]+<'
-    result = re.search(titlePatternEx, respHtml)
-    if result == None:
-        titlePat = '<a id="sh_cp" class="sc_light" title="'
-        titlePatternEx = r'<a\s+id\="sh_cp"\s+class\="sc_light"\s+title\="[^"]+"'
-        result = re.search(titlePatternEx, respHtml)
-    if result:
-        result = result.group()
-        result = result[ len(titlePat) : (len(result)-1) ]
-    return result
-
-# "copyright":"Kuha Karuhas pavilion in Phraya Nakhon Cave, Thailand (© Bule Sky Studio/Shutterstock)"
-def extractTitle2(respHtml):
-    titlePat = '"copyright":"'
-    titlePatternEx = r'"copyright":"[^\"]+"'
-    result = re.search(titlePatternEx, respHtml)
-    if result:
-        result = result.group()
-        result = result[ len(titlePat) : (len(result)-1) ]
-    return result
-
-def extractImageUrl(respHtml):
-    imageRE = r'<div\s+class\="img_cont"\s+style\="background\-image\:\s+url\([^\)]+\)'
-    result = re.search(imageRE, respHtml)
-    if result:
-        result = result.group()
-
-        flag = r'('
-        begin = result.find(flag)
-
-        if begin >= 0:
-            flag2 = r')'
-            end = result.find(flag2, begin+1)
-            result = result[ (begin+1) : end ]
-        else:
-            result = ''
-    else:
-        imageRE = r'id\="bgLink"\s+rel\="preload"\s+href\="[^"]+"'
-        result = re.search(imageRE, respHtml)
-        if result:
-            result = result.group()
-            pat = 'id="bgLink" rel="preload" href="'
-            begin = len(pat)
-            if begin >= 0:
-                flag2 = r'"'
-                end = result.find(flag2, begin+1)
-                result = result[ (begin+1) : end ]
-            else:
-                result = ''
-    return result
 
 def downloadImage(imageUrl):
     try:
@@ -160,7 +105,10 @@ def getBingImage(userUrl):
     respHtml = getWebContents(userUrl)
     respHtml = str(respHtml, "utf-8")
 
-    imageUrl = extractImageUrl(respHtml)
+    p = BingHtmlParser()
+    p.feed(respHtml)
+    p.close()
+    imageUrl = p.image_url
 
     imgData = None
     if imageUrl:
