@@ -40,9 +40,12 @@ def _postBingImageToWebsite(prefix, userUrl, weibo):
     p.feed(respHtml)
     p.close()
 
-    imageUrl = p.image_url
     title = p.info
-    copyright = p.copyright
+    _copyright = p.copyright
+
+    imageUrl = extractImageUrl(respHtml)
+    if imageUrl == None:
+        imageUrl = p.image_url
 
     imgData = None
     if imageUrl:
@@ -63,7 +66,7 @@ def _postBingImageToWebsite(prefix, userUrl, weibo):
 
         picFile = BytesIO(imgData)
 
-        info = title + " " + copyright + "\n" + prefix
+        info = title + " " + _copyright + "\n" + prefix
 
         if weibo:
             from weibo_tiny import Client
@@ -77,6 +80,37 @@ def _postBingImageToWebsite(prefix, userUrl, weibo):
             from tweetpost import postTweet
             if postTweet(info, picFile) == False:
                 postTweet(title, picFile)
+
+def extractImageUrl(respHtml):
+    imageRE = r'<div\s+class\="img_cont"\s+style\="background\-image\:\s+url\([^\)]+\)'
+    result = re.search(imageRE, respHtml)
+    if result:
+        result = result.group()
+
+        flag = r'('
+        begin = result.find(flag)
+
+        if begin >= 0:
+            flag2 = r')'
+            end = result.find(flag2, begin+1)
+            result = result[ (begin+1) : end ]
+        else:
+            result = ''
+    else:
+        imageRE = r'id\="bgLink"\s+rel\="preload"\s+href\="[^"]+"'
+        result = re.search(imageRE, respHtml)
+        if result:
+            result = result.group()
+            pat = 'id="bgLink" rel="preload" href="'
+            begin = len(pat)
+            if begin >= 0:
+                flag2 = r'"'
+                end = result.find(flag2, begin+1)
+                result = result[ (begin+1) : end ]
+            else:
+                result = ''
+    return result
+
 
 def postBingImageToTwitter(prefix, userUrl):
     _postBingImageToWebsite(prefix, userUrl, None)
@@ -108,7 +142,10 @@ def getBingImage(userUrl):
     p = BingHtmlParser()
     p.feed(respHtml)
     p.close()
-    imageUrl = p.image_url
+
+    imageUrl = extractImageUrl(respHtml)
+    if imageUrl == None:
+        imageUrl = p.image_url
 
     imgData = None
     if imageUrl:
@@ -129,8 +166,9 @@ if __name__=="__main__":
     postBingImageToTwitter(prefix, userUrl)
 
     import time
-    time.sleep(5)
+    #time.sleep(5)
 
     prefix = u'每日 #必应美图 # #壁纸 #。'
     userUrl = BING_CHINA
-    postBingImageToTwitter(prefix, userUrl)
+    #postBingImageToTwitter(prefix, userUrl)
+    
