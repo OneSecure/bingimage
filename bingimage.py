@@ -78,7 +78,9 @@ def _postBingImageToWebsite(prefix, userUrl, weibo):
             #    info = info[0 : maxTweetLen]
 
             from tweetpost import postTweet
-            if postTweet(info, picFile) == False:
+            try:
+                postTweet(info, picFile)
+            except:
                 postTweet(title, picFile)
 
 def extractImageUrl(respHtml):
@@ -163,12 +165,12 @@ def getBingImage(userUrl):
 if __name__=="__main__":
     prefix = u"Today's pretty #wallpaper # #photo # on #Bing #."
     userUrl = BING_GLOBAL
-    postBingImageToTwitter(prefix, userUrl)
+    #postBingImageToTwitter(prefix, userUrl)
 
     import time
     #time.sleep(5)
 
     prefix = u'每日 #必应美图 # #壁纸 #。'
     userUrl = BING_CHINA
-    #postBingImageToTwitter(prefix, userUrl)
+    postBingImageToTwitter(prefix, userUrl)
     
