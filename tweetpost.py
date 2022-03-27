@@ -22,7 +22,8 @@ def postTweet_py3(text, image):
 
     try:
         if image:
-            twitter.update_status_with_media(status=text, media=image)
+            response = twitter.upload_media(media=image)
+            twitter.update_status(status=text, media_ids=[response['media_id']])
         else :
             twitter.update_status(status=text)
     except TwythonError as e:

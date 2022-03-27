@@ -9,6 +9,8 @@
 功能只有一个：抓取壁纸网站 [必应(Bing)](http://www.bing.com) 上的图片，并自动发送到 [微博](http://www.weibo.com) 上。
 
 
+> Please install dependencies with `pip3 install -r requirements.txt` before you run this app.
+
 
 抓取网页
 --------------------
