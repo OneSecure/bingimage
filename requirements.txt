@@ -1,2 +1,2 @@
-TweetPony==1.5.2
+# TweetPony==1.5.2
 twython==3.9.1
